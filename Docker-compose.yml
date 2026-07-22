@@ -1,0 +1,45 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      
+    image: proj_restapi:0.1
+    container_name: REST_APP
+    ports:
+     - "2001:2000"
+    networks:
+      - api-project
+
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:15
+    container_name: REST_DB
+    ports:
+     - "2002:5432" #optonal
+    networks:
+      - api-project
+      
+    environment:
+      POSTGRES_DB: kvdb
+      POSTGRES_USER: awais
+      POSTGRES_PASSWORD: password
+  
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+
+networks:
+  api-project:
+    external : true
